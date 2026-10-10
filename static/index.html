@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Voice Assistant</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/ort.wasm.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@ricky0123/vad-web@0.0.24/dist/bundle.min.js"></script>
+</head>
+<body data-status="offline">
+  <header class="topbar">
+    <h1>Voice assistant</h1>
+    <p id="models" class="models">Connecting…</p>
+  </header>
+
+  <main class="layout">
+    <section class="conversation">
+      <div id="log" class="log" aria-live="polite">
+        <p class="empty">Press <strong>Start talking</strong>, allow the microphone, and speak in English or Hindi.</p>
+      </div>
+      <div class="composer">
+        <input id="text-input" type="text" placeholder="Or type a message…" autocomplete="off" />
+        <button id="send-btn" type="button">Send</button>
+      </div>
+    </section>
+
+    <aside class="side">
+      <button id="start-btn" class="primary" type="button">Start talking</button>
+      <p id="status-label" class="status-label">Offline</p>
+      <label class="check"><input id="barge-in" type="checkbox" checked /> Let me interrupt by speaking</label>
+      <label>Language
+        <select id="language">
+          <option value="auto">Auto (English / Hindi)</option>
+          <option value="en">English</option>
+          <option value="hi">Hindi</option>
+        </select>
+      </label>
+      <button id="reset-btn" type="button">Clear conversation</button>
+    </aside>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
+
