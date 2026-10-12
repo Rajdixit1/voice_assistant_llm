@@ -1,19 +1,7 @@
-import io
 import logging
-import wave
 from pathlib import Path
 
 log = logging.getLogger(__name__)
-
-
-def pcm16_to_wav(pcm: bytes, sample_rate: int) -> bytes:
-    buf = io.BytesIO()
-    with wave.open(buf, "wb") as wav:
-        wav.setnchannels(1)
-        wav.setsampwidth(2)
-        wav.setframerate(sample_rate)
-        wav.writeframes(pcm)
-    return buf.getvalue()
 
 
 class TextToSpeech:
@@ -35,13 +23,14 @@ class TextToSpeech:
     def languages(self) -> list:
         return list(self.voices)
 
-    def synthesize(self, text: str, lang: str = "en") -> bytes:
+    def synthesize(self, text: str, lang: str = "en") -> tuple[bytes, int]:
+        """Return raw 16-bit mono PCM and its sample rate."""
         voice = self.voices.get(lang) or self.voices[self.fallback]
         if hasattr(voice, "synthesize_stream_raw"):
             pcm = b"".join(voice.synthesize_stream_raw(text))
         else:
             pcm = b"".join(chunk.audio_int16_bytes for chunk in voice.synthesize(text))
-        return pcm16_to_wav(pcm, voice.config.sample_rate)
+        return pcm, voice.config.sample_rate
 
     def warmup(self) -> None:
         for lang in self.voices:

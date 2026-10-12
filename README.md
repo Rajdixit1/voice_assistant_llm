@@ -26,16 +26,29 @@ ollama pull qwen2.5:3b
 python server.py
 ```
 
-Open http://127.0.0.1:8000 in Chrome/Edge, click **Start talking**, allow the mic.
+Open http://127.0.0.1:8000 in Chrome/Edge, click **Start call**, allow the mic, and talk.
+The call stays open: no buttons between turns, and you can interrupt the assistant.
+
+Use an NVIDIA GPU for speech-to-text (`WHISPER_DEVICE=auto` or `cuda`,
+`WHISPER_COMPUTE_TYPE=auto`). On CPU, Whisper `small` alone takes ~4 s per turn.
 
 ## How it works
 
-1. Browser VAD (Silero) detects end of speech, sends 16 kHz PCM over WebSocket.
-2. Server transcribes with faster-whisper (auto English/Hindi).
-3. Transcript + recent history go to Ollama (streaming).
-4. Tokens stream to UI and into a sentence chunker; each sentence goes to Piper
-   while the LLM still generates the next one (LLM/TTS overlap = low latency).
-5. WAV chunks stream back for gapless playback.
-6. Speaking mid-reply pauses playback; real speech cancels the turn (barge-in).
+1. During a call the browser streams every 32 ms mic frame plus its Silero VAD
+   speech probability over a WebSocket.
+2. The server's turn detector (`pipeline/turn_detector.py`) tracks who is talking.
+   While you speak, partial transcripts appear live (GPU only).
+3. After ~200 ms of silence the server starts the reply speculatively
+   (faster-whisper → Ollama → Piper) but holds the output. At ~500 ms of silence the
+   turn is final and the held reply is released at once; if you keep talking it is
+   discarded.
+4. LLM tokens feed a sentence chunker; each chunk goes to Piper while the LLM
+   generates the next. Raw PCM streams back for gapless playback.
+5. If you talk over the assistant, its volume ducks immediately. Sustained speech
+   (~300 ms) cancels the reply (barge-in); a short "mm-hmm" is ignored.
+6. Each reply shows its latency (end of your speech → first audio) in the UI.
 
-Config: `.env` — `WHISPER_MODEL`, `LLM_MODEL`, `MAX_HISTORY_TURNS`, voices, host/port.
+Config: `.env`. Main settings are `WHISPER_MODEL`, `WHISPER_DEVICE`, `LLM_MODEL`,
+`MAX_HISTORY_TURNS`, voices and host/port. Turn-taking settings are
+`SPECULATIVE_SILENCE_MS`, `ENDPOINT_SILENCE_MS`, `BARGE_IN_MS`,
+`PARTIAL_INTERVAL_MS` and `GREETING` (empty disables the greeting).

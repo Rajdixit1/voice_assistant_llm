@@ -34,6 +34,17 @@ class Settings:
     voice_hi: str = os.getenv("PIPER_VOICE_HI", "hi_IN-pratham-medium")
     piper_use_cuda: bool = _bool("PIPER_USE_CUDA", False)
 
+    # --- Live call / turn-taking ---
+    vad_positive: float = float(os.getenv("VAD_POSITIVE", "0.6"))
+    vad_negative: float = float(os.getenv("VAD_NEGATIVE", "0.35"))
+    min_speech_ms: int = int(os.getenv("MIN_SPEECH_MS", "160"))
+    # Start thinking after this much silence, but only speak once ENDPOINT_SILENCE_MS is reached.
+    speculative_silence_ms: int = int(os.getenv("SPECULATIVE_SILENCE_MS", "200"))
+    endpoint_silence_ms: int = int(os.getenv("ENDPOINT_SILENCE_MS", "500"))
+    barge_in_ms: int = int(os.getenv("BARGE_IN_MS", "300"))
+    partial_interval_ms: int = int(os.getenv("PARTIAL_INTERVAL_MS", "700"))  # 0 = off; GPU only
+    greeting: str = os.getenv("GREETING", "Hi, I'm {name}. How can I help you today?")
+
     assistant_name: str = os.getenv("ASSISTANT_NAME", "Aria")
     host: str = os.getenv("HOST", "127.0.0.1")
     port: int = int(os.getenv("PORT", "8000"))

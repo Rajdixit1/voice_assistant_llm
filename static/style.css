@@ -45,6 +45,25 @@ button.primary { background: var(--accent); border-color: var(--accent); color: 
 .side label { display: flex; flex-direction: column; gap: .3rem; font-size: .9rem; }
 .side label.check { flex-direction: row; align-items: center; gap: .5rem; }
 .side select { padding: .5rem; border-radius: .5rem; border: 1px solid var(--line); background: var(--surface); }
-body[data-status="listening"] .status-label { color: var(--accent); }
+body[data-status="listening"] .status-label,
+body[data-status="hearing"] .status-label,
 body[data-status="speaking"] .status-label { color: var(--accent); }
+
+.msg.user.live { opacity: .65; font-style: italic; }
+.msg .latency { display: block; margin-top: .3rem; font-size: .75rem; color: var(--muted); cursor: help; }
+
+.orb {
+  --level: 0;
+  align-self: center; width: 7rem; height: 7rem; border-radius: 50%; margin: .5rem 0;
+  background: var(--line); transition: transform .12s ease-out, background .2s;
+}
+body.in-call .orb { background: var(--accent); opacity: .35; }
+body.in-call[data-status="hearing"] .orb { opacity: .9; transform: scale(calc(1 + var(--level) * .18)); }
+body.in-call[data-status="speaking"] .orb { opacity: .9; animation: talk 1.1s ease-in-out infinite; }
+body.in-call[data-status="thinking"] .orb { opacity: .6; animation: talk 1.6s ease-in-out infinite; }
+@keyframes talk { 50% { transform: scale(1.08); } }
+.status-label { text-align: center; }
+.call-timer { margin: 0; text-align: center; color: var(--muted); font-variant-numeric: tabular-nums; visibility: hidden; }
+body.in-call .call-timer { visibility: visible; }
+body.in-call #call-btn { background: var(--danger); border-color: var(--danger); }
 

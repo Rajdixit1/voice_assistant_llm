@@ -17,7 +17,7 @@
   <main class="layout">
     <section class="conversation">
       <div id="log" class="log" aria-live="polite">
-        <p class="empty">Press <strong>Start talking</strong>, allow the microphone, and speak in English or Hindi.</p>
+        <p class="empty">Press <strong>Start call</strong>, allow the microphone, and just talk, in English or Hindi. Speak naturally; you can interrupt the assistant at any time.</p>
       </div>
       <div class="composer">
         <input id="text-input" type="text" placeholder="Or type a message…" autocomplete="off" />
@@ -26,8 +26,10 @@
     </section>
 
     <aside class="side">
-      <button id="start-btn" class="primary" type="button">Start talking</button>
+      <div class="orb" aria-hidden="true"></div>
       <p id="status-label" class="status-label">Offline</p>
+      <p id="call-timer" class="call-timer">00:00</p>
+      <button id="call-btn" class="primary" type="button">Start call</button>
       <label class="check"><input id="barge-in" type="checkbox" checked /> Let me interrupt by speaking</label>
       <label>Language
         <select id="language">

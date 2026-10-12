@@ -16,7 +16,7 @@ _SPACES = re.compile(r"\s+")
 
 
 class SentenceChunker:
-    def __init__(self, first_min_chars=40, soft_min_chars=120, max_chars=240):
+    def __init__(self, first_min_chars=24, soft_min_chars=120, max_chars=240):
         self.first_min_chars = first_min_chars
         self.soft_min_chars = soft_min_chars
         self.max_chars = max_chars

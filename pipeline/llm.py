@@ -10,6 +10,9 @@ class OllamaChat:
         self.model = model
         self.options = {"temperature": temperature, "num_predict": max_tokens}
         self.keep_alive = keep_alive
+        # "localhost" may resolve to ::1 first while Ollama listens on IPv4 only; on Windows
+        # each such connection then stalls ~2 s before falling back.
+        base_url = base_url.replace("://localhost", "://127.0.0.1")
         self.client = httpx.AsyncClient(base_url=base_url, timeout=httpx.Timeout(120.0, connect=5.0))
 
     async def check(self):
